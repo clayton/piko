@@ -47,9 +47,11 @@ test:
 	$(CXX) -std=c++17 -Wall -Wextra -pedantic tests/button_logic_test.cpp -o /tmp/piko-button-test
 	$(CXX) -std=c++17 -Wall -Wextra -pedantic tests/power_logic_test.cpp -o /tmp/piko-power-test
 	$(CXX) -std=c++17 -Wall -Wextra -pedantic tests/route_logic_test.cpp -o /tmp/piko-route-test
+	$(CXX) -std=c++17 -Wall -Wextra -pedantic tests/radar_logo_test.cpp -o /tmp/piko-logo-test
 	/tmp/piko-button-test
 	/tmp/piko-power-test
 	/tmp/piko-route-test
+	/tmp/piko-logo-test
 
 monitor:
 	arduino-cli monitor -p $(PORT) --config baudrate=115200

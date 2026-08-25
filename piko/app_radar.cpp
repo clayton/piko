@@ -7,6 +7,7 @@
 
 #include "config.h"
 #include "hw.h"
+#include "../radar/radar_logo.h"
 #include "../radar/route_logic.h"
 #include "ui.h"
 
@@ -190,60 +191,6 @@ void fetchDetails(const Target &target) {
   }
 }
 
-uint16_t airlineColor(const char *code) {
-  if (!strcmp(code, "SWA")) return 0xF800;
-  if (!strcmp(code, "AAL")) return 0x001F;
-  if (!strcmp(code, "UAL") || !strcmp(code, "JBU")) return 0x041F;
-  if (!strcmp(code, "DAL")) return 0xA800;
-  if (!strcmp(code, "ASA")) return 0x0390;
-  if (!strcmp(code, "FFT")) return 0x07E0;
-  if (!strcmp(code, "FDX")) return 0x801F;
-  if (!strcmp(code, "UPS")) return 0xA280;
-  if (!strcmp(code, "BAW")) return 0x0012;
-  return 0x07FF;
-}
-
-void drawPixelLogo(const char *code, int x, int y) {
-  const uint16_t brand = airlineColor(code);
-  canvas.fillRoundRect(x, y, 88, 58, 8, 0x1082);
-
-  if (!strcmp(code, "SWA")) {
-    canvas.fillTriangle(x + 18, y + 15, x + 44, y + 48, x + 44, y + 25, 0xF800);
-    canvas.fillTriangle(x + 70, y + 15, x + 44, y + 48, x + 44, y + 25, 0x001F);
-    canvas.fillRect(x + 27, y + 18, 34, 7, 0xFFE0);
-  } else if (!strcmp(code, "JBU")) {
-    const uint16_t blues[] = {0x0012, 0x021F, 0x041F, 0x07FF};
-    for (int row = 0; row < 4; ++row)
-      for (int col = 0; col < 6; ++col)
-        canvas.fillRect(x + 8 + col * 12, y + 6 + row * 12, 10, 10, blues[(row + col * 3) % 4]);
-    canvas.fillRect(x + 8, y + 43, 70, 9, 0x0012);
-  } else if (!strcmp(code, "AAL")) {
-    for (int i = 0; i < 4; ++i) {
-      canvas.fillRect(x + 16 + i * 8, y + 9 + i * 8, 43 - i * 6, 6, i < 2 ? 0x001F : 0xF800);
-    }
-  } else if (!strcmp(code, "DAL")) {
-    canvas.fillTriangle(x + 44, y + 5, x + 17, y + 48, x + 71, y + 48, 0xF800);
-    canvas.fillTriangle(x + 44, y + 19, x + 31, y + 43, x + 57, y + 43, 0x0012);
-  } else if (!strcmp(code, "UAL")) {
-    canvas.drawCircle(x + 44, y + 29, 22, 0x07FF);
-    canvas.drawCircle(x + 44, y + 29, 12, 0x07FF);
-    canvas.drawFastHLine(x + 23, y + 22, 43, 0x07FF);
-    canvas.drawFastHLine(x + 23, y + 36, 43, 0x07FF);
-    canvas.drawFastVLine(x + 44, y + 8, 43, 0x07FF);
-  } else if (!strcmp(code, "ASA")) {
-    canvas.fillTriangle(x + 12, y + 46, x + 35, y + 15, x + 48, y + 46, 0x07FF);
-    canvas.fillTriangle(x + 34, y + 46, x + 55, y + 9, x + 76, y + 46, 0xFFFF);
-  } else if (!strcmp(code, "FFT")) {
-    canvas.fillTriangle(x + 13, y + 46, x + 50, y + 8, x + 76, y + 46, 0x07E0);
-    canvas.fillTriangle(x + 34, y + 46, x + 52, y + 25, x + 62, y + 46, 0xFFE0);
-  } else {
-    canvas.fillRoundRect(x + 8, y + 7, 72, 44, 5, brand);
-    canvas.setTextSize(3);
-    canvas.setTextColor(0xFFFF);
-    canvas.setCursor(x + 17, y + 18);
-    canvas.print(code[0] ? code : "AIR");
-  }
-}
 
 void drawModeBar() {
   const char *names[] = {"NEAR", "HIGH", "BIG"};
@@ -318,7 +265,8 @@ void app_radar_draw() {
     return;
   }
   const Target &target = targets[selectedIndex];
-  drawPixelLogo(details.airlineCode, 18, 56);
+  char logoCode[4];
+  if (radarLogoCode(logoCode, details.airlineCode, target.callsign)) drawRadarLogo(canvas, logoCode, 18, 54);
 
   canvas.setTextColor(0x8410);
   canvas.setTextSize(1);
