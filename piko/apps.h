@@ -18,5 +18,6 @@ extern bool displayIdle;
 void drawIdle();
 bool wakeDisplay();
 int activeAppId();
+bool app_raises_dismiss();
 
 enum AppId { APP_RADAR = 0, APP_GEIGER = 1, APP_RAISES = 2 };

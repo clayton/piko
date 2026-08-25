@@ -47,14 +47,14 @@ void hwInit() {
   }
 }
 
-bool moved() {
+float movement() {
   static bool ready = false;
   static float lastX = 0;
   static float lastY = 0;
   static float lastZ = 0;
   float x, y, z;
-  if (!imu.getDataReady() || !imu.getAccelerometer(x, y, z)) return false;
-  bool result = ready && motionDetected(x, y, z, lastX, lastY, lastZ, WAKE_MOTION_G);
+  if (!imu.getDataReady() || !imu.getAccelerometer(x, y, z)) return 0;
+  float result = ready ? fabsf(x - lastX) + fabsf(y - lastY) + fabsf(z - lastZ) : 0;
   lastX = x;
   lastY = y;
   lastZ = z;

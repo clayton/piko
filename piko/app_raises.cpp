@@ -27,6 +27,7 @@ Incident incidents[MAX_EVENTS]{};
 int incidentCount = 0;
 int selected = 0;
 uint32_t revision = 0;
+uint32_t dismissedRevision = 0;
 uint32_t lastPoll = 0;
 uint32_t lastFrame = 0;
 uint32_t lastReconnect = 0;
@@ -152,17 +153,19 @@ bool fetchFeed() {
   Serial.printf("Raises: revision %lu%s\n", static_cast<unsigned long>(revision), changed ? " new" : "");
   online = true;
   incidentCount = 0;
-  for (JsonObject event : document["events"].as<JsonArray>()) {
-    if (incidentCount >= MAX_EVENTS) break;
-    copyText(incidents[incidentCount].type, sizeof(incidents[incidentCount].type), event["type"] | "notice.created");
-    copyText(incidents[incidentCount].project, sizeof(incidents[incidentCount].project), event["project"] | "Unknown app");
-    copyText(incidents[incidentCount].message, sizeof(incidents[incidentCount].message), event["message"] | "Raises event");
-    ++incidentCount;
+  if (!feedDismissed(revision, dismissedRevision)) {
+    for (JsonObject event : document["events"].as<JsonArray>()) {
+      if (incidentCount >= MAX_EVENTS) break;
+      copyText(incidents[incidentCount].type, sizeof(incidents[incidentCount].type), event["type"] | "notice.created");
+      copyText(incidents[incidentCount].project, sizeof(incidents[incidentCount].project), event["project"] | "Unknown app");
+      copyText(incidents[incidentCount].message, sizeof(incidents[incidentCount].message), event["message"] | "Raises event");
+      ++incidentCount;
+    }
   }
   selected = selectedIncident(changed, selected, incidentCount);
   if (changed) {
     arrivedAt = millis();
-    if (activeAppId() == APP_RAISES) wakeDisplay();
+    if (incidentCount && activeAppId() == APP_RAISES) wakeDisplay();
   }
   return true;
 }
@@ -229,4 +232,13 @@ void app_raises_top_short() {
 void app_raises_bottom_short() {
   selected = 0;
   app_raises_draw();
+}
+
+bool app_raises_dismiss() {
+  if (!incidentCount) return false;
+  dismissedRevision = revision;
+  incidentCount = 0;
+  selected = 0;
+  app_raises_draw();
+  return true;
 }

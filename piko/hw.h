@@ -32,6 +32,7 @@ constexpr uint8_t IDLE_BRIGHTNESS = 32;
 constexpr uint32_t IDLE_AFTER_MS = 45000;
 constexpr uint32_t MOTION_POLL_MS = 100;
 constexpr float WAKE_MOTION_G = 0.12f;
+constexpr float SHAKE_MOTION_G = 0.8f;
 constexpr uint32_t TOP_LONG_MS = 900;
 constexpr uint32_t BUTTON_DEBOUNCE_MS = 250;
 constexpr uint32_t PMU_POLL_MS = 50;
@@ -46,7 +47,7 @@ extern volatile bool topButtonLong;
 void ARDUINO_ISR_ATTR topButtonInterrupt();
 
 void hwInit();
-bool moved();
+float movement();
 bool pluggedIn();
 void setDisplayBrightness(uint8_t brightness);
 void wifiStaReconnect();

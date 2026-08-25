@@ -188,7 +188,10 @@ void loop() {
   const uint32_t now = millis();
   if (now - lastMotionPoll >= MOTION_POLL_MS) {
     lastMotionPoll = now;
-    if (moved()) {
+    float motion = movement();
+    if (activeApp == APP_RAISES && motion >= SHAKE_MOTION_G && app_raises_dismiss()) {
+      lastActivity = now;
+    } else if (motion >= WAKE_MOTION_G) {
       if (!wakeDisplay()) lastActivity = now;
     }
   }
