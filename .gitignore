@@ -1,9 +1,15 @@
 build/
 build-geiger/
+build-raises/
 backups/
 Makefile.local
 radar/config.h
 radar/config.h.tpl
+raises_piko/config.h
+raises_piko/config.h.tpl
+raises_piko/worker/.dev.vars
+raises_piko/worker/node_modules/
+raises_piko/worker/.wrangler/
 radar/secrets.h
 radar/secrets.h.tpl
 .DS_Store

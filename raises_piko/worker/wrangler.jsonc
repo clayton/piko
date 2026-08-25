@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "piko-raises-bridge",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-25",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "PIKO_DEVICE_TOKEN": "configured-as-a-secret",
+    "RAISES_SIGNING_SECRET": "configured-as-a-secret"
+  },
+  "kv_namespaces": [
+    { "binding": "PIKO", "id": "db702546784b4089a7b8d5e968e6f2e1" }
+  ],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}

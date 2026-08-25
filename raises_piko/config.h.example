@@ -1,0 +1,6 @@
+#pragma once
+
+#define WIFI_SSID "your-wifi-name"
+#define WIFI_PASSWORD "your-wifi-password"
+#define PIKO_FEED_URL "https://piko-raises-bridge.your-subdomain.workers.dev/piko"
+#define PIKO_DEVICE_TOKEN "generate-a-long-random-token"

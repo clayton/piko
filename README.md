@@ -13,6 +13,10 @@ make geiger-flash
 
 The top button cycles LOW, MED, and HIGH sensitivity. The bottom button mutes the speaker. Hold the bottom button for about six seconds to power off. The firmware does not join a network, save packet contents, or transmit captured data.
 
+## Raises Piko
+
+`raises_piko/` turns Piko into a tiny incident creature. A signed Raises webhook changes his mood when a notice, new error, regression, or GitHub issue arrives. See [`raises_piko/README.md`](raises_piko/README.md) for the Cloudflare Worker bridge and flashing steps.
+
 ## Aircraft display
 
 Piko reads a local dump1090-compatible feed and shows one aircraft at a time with ADSBDB route and airframe details. The top button cycles **NEAR**, **HIGH**, and **BIG** rankings. The bottom button advances to the next aircraft. Hold the bottom button for about six seconds to power off.
