@@ -176,8 +176,12 @@ bool fetchFeed() {
   HTTPClient http;
   http.setConnectTimeout(1800);
   http.setTimeout(3500);
+  if (!http.begin(PIKO_FEED_URL)) {
+    online = false;
+    return false;
+  }
   http.addHeader("Authorization", "Bearer " PIKO_DEVICE_TOKEN);
-  if (!http.begin(PIKO_FEED_URL) || http.GET() != HTTP_CODE_OK) {
+  if (http.GET() != HTTP_CODE_OK) {
     http.end();
     online = false;
     return false;

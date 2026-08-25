@@ -112,6 +112,7 @@ void wrapMessage(const char *text, int y, int maxChars, int maxLines) {
 
 bool fetchFeed() {
   if (WiFi.status() != WL_CONNECTED) {
+    Serial.printf("Raises: Wi-Fi status %d\n", WiFi.status());
     online = false;
     if (millis() - lastReconnect > 10000) {
       lastReconnect = millis();
@@ -124,8 +125,15 @@ bool fetchFeed() {
   HTTPClient http;
   http.setConnectTimeout(1800);
   http.setTimeout(3500);
+  if (!http.begin(PIKO_FEED_URL)) {
+    Serial.println("Raises: invalid feed URL");
+    online = false;
+    return false;
+  }
   http.addHeader("Authorization", "Bearer " PIKO_DEVICE_TOKEN);
-  if (!http.begin(PIKO_FEED_URL) || http.GET() != HTTP_CODE_OK) {
+  int status = http.GET();
+  if (status != HTTP_CODE_OK) {
+    Serial.printf("Raises: HTTP %d\n", status);
     http.end();
     online = false;
     return false;
@@ -133,11 +141,15 @@ bool fetchFeed() {
   JsonDocument document;
   DeserializationError error = deserializeJson(document, http.getStream());
   http.end();
-  if (error) return false;
+  if (error) {
+    Serial.printf("Raises: JSON %s\n", error.c_str());
+    return false;
+  }
 
   uint32_t nextRevision = document["revision"] | 0;
   bool changed = nextRevision != revision;
   revision = nextRevision;
+  Serial.printf("Raises: revision %lu%s\n", static_cast<unsigned long>(revision), changed ? " new" : "");
   online = true;
   incidentCount = 0;
   for (JsonObject event : document["events"].as<JsonArray>()) {
