@@ -1,12 +1,15 @@
 build/
 build-geiger/
 build-raises/
+build-piko/
 backups/
 Makefile.local
 radar/config.h
 radar/config.h.tpl
 raises_piko/config.h
 raises_piko/config.h.tpl
+piko/config.h
+piko/config.h.tpl
 raises_piko/worker/.dev.vars
 raises_piko/worker/node_modules/
 raises_piko/worker/.wrangler/

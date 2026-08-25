@@ -1,6 +1,20 @@
-# Piko radar
+# Piko
 
 Pocket instruments for the Waveshare ESP32-S3 Touch AMOLED 1.8 V2.
+
+## Unified firmware
+
+`piko/` combines Radar, Internet Geiger, and Raises Piko in one binary. Hold the **top button for about 900 ms** to open the app switcher. In the switcher, a short top press cycles apps and a short bottom press launches the highlighted one. Short top and bottom presses keep each app's normal behavior while you are inside an app. Hold the bottom button for about six seconds to power off.
+
+The unified firmware starts in Raises Piko on boot.
+
+```sh
+make setup
+cp piko/config.h.example piko/config.h
+make piko-flash
+```
+
+Standalone sketches below still build and flash independently.
 
 ## Internet Geiger counter
 
@@ -32,15 +46,18 @@ Piko reads a local dump1090-compatible feed and shows one aircraft at a time wit
 Copy the public example and enter your local values:
 
 ```sh
+cp piko/config.h.example piko/config.h
+# or for standalone radar only:
 cp radar/config.h.example radar/config.h
 ```
 
-`radar/config.h` contains Wi-Fi credentials, feeder addresses, and receiver coordinates. It is ignored by Git.
+Unified `piko/config.h` contains Wi-Fi credentials, dump1090 feeder addresses, receiver coordinates, and Raises bridge settings. Standalone `radar/config.h` and `raises_piko/config.h` remain for individual sketches. All config files are ignored by Git.
 
 The Makefile can copy any ignored local template into place. Set it in an ignored `Makefile.local`:
 
 ```make
-CONFIG_TEMPLATE = radar/config.h.tpl
+CONFIG_TEMPLATE = piko/config.h.tpl
+CONFIG_DEST = piko/config.h
 ```
 
 Then run `make secrets`. This supports a 1Password `op inject` workflow outside the public repository.
@@ -50,7 +67,10 @@ Then run `make secrets`. This supports a 1Password `op inject` workflow outside 
 ```sh
 brew install arduino-cli
 make setup
-make flash
+make piko-flash    # all three apps
+make flash         # radar only
+make geiger-flash  # geiger only
+make raises-flash  # raises only
 make clean-secrets
 ```
 

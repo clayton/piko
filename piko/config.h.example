@@ -1,0 +1,13 @@
+#pragma once
+
+#define WIFI_SSID "your-wifi-name"
+#define WIFI_PASSWORD "your-wifi-password"
+
+#define ADSB_FEED_URL "http://192.168.1.10/dump1090/data/aircraft.json"
+#define PLANE_DETAILS_URL "http://192.168.1.10/cgi-bin/plane"
+
+constexpr float RECEIVER_LAT = 33.0000f;
+constexpr float RECEIVER_LON = -112.0000f;
+
+#define PIKO_FEED_URL "https://piko-raises-bridge.your-subdomain.workers.dev/piko"
+#define PIKO_DEVICE_TOKEN "generate-a-long-random-token"

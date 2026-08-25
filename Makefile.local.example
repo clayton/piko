@@ -1,2 +1,3 @@
-CONFIG_TEMPLATE = radar/config.h.tpl
+CONFIG_TEMPLATE = piko/config.h.tpl
+CONFIG_DEST = piko/config.h
 FACTORY_BACKUP = backups/factory.bin
