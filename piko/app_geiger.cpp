@@ -227,7 +227,7 @@ void app_geiger_tick() {
     portEXIT_CRITICAL(&eventMux);
   }
 
-  if (millis() - lastDraw >= DRAW_MS) {
+  if (!displayIdle && millis() - lastDraw >= DRAW_MS) {
     lastDraw = millis();
     app_geiger_draw();
   }
@@ -287,6 +287,12 @@ void app_geiger_draw() {
   canvas.setCursor(14, 427);
   canvas.printf("%lu PACKETS", static_cast<unsigned long>(packetsSnapshot));
   canvas.flush();
+}
+
+const char *app_geiger_status() {
+  static char status[24];
+  snprintf(status, sizeof(status), "%s  %d CPM", activityName(eventsPerMinute()), eventsPerMinute());
+  return status;
 }
 
 void app_geiger_top_short() {

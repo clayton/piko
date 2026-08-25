@@ -168,7 +168,7 @@ void app_raises_tick() {
     lastPoll = millis();
     fetchFeed();
   }
-  if (millis() - lastFrame >= FRAME_MS) {
+  if (!displayIdle && millis() - lastFrame >= FRAME_MS) {
     lastFrame = millis();
     app_raises_draw();
   }
@@ -195,6 +195,10 @@ void app_raises_draw() {
     centered("Piko is keeping watch", 360, 2, 0x8410);
   }
   canvas.flush();
+}
+
+const char *app_raises_status() {
+  return moodText();
 }
 
 void app_raises_top_short() {

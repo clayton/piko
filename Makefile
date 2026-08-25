@@ -9,7 +9,7 @@ CONFIG_DEST ?= radar/config.h
 
 setup:
 	arduino-cli core install esp32:esp32@3.3.5
-	arduino-cli lib install 'GFX Library for Arduino@1.6.4' 'ArduinoJson@7.4.2' 'XPowersLib@0.3.3'
+	arduino-cli lib install 'GFX Library for Arduino@1.6.4' 'ArduinoJson@7.4.2' 'SensorLib@0.3.3' 'XPowersLib@0.3.3'
 
 secrets:
 	cp '$(CONFIG_TEMPLATE)' '$(CONFIG_DEST)'
@@ -45,7 +45,9 @@ piko-flash: piko-build
 
 test:
 	$(CXX) -std=c++17 -Wall -Wextra -pedantic tests/button_logic_test.cpp -o /tmp/piko-button-test
+	$(CXX) -std=c++17 -Wall -Wextra -pedantic tests/power_logic_test.cpp -o /tmp/piko-power-test
 	/tmp/piko-button-test
+	/tmp/piko-power-test
 
 monitor:
 	arduino-cli monitor -p $(PORT) --config baudrate=115200

@@ -296,7 +296,7 @@ void app_radar_tick() {
   if (millis() - lastRefresh >= REFRESH_MS) {
     lastRefresh = millis();
     if (fetchTargets() && selectedIndex >= 0) fetchDetails(targets[selectedIndex]);
-    app_radar_draw();
+    if (!displayIdle) app_radar_draw();
   }
 }
 
@@ -348,6 +348,15 @@ void app_radar_draw() {
 
   centered(details.airline[0] ? details.airline : details.type, 418, 2, 0x8410);
   canvas.flush();
+}
+
+const char *app_radar_status() {
+  static char status[32];
+  if (selectedIndex < 0) return "NO AIRCRAFT";
+  snprintf(status, sizeof(status), "%s  %.1f NM",
+           targets[selectedIndex].callsign[0] ? targets[selectedIndex].callsign : targets[selectedIndex].hex,
+           targets[selectedIndex].distance);
+  return status;
 }
 
 void app_radar_top_short() {

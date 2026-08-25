@@ -4,6 +4,7 @@
 #include <Arduino_GFX_Library.h>
 #include <WiFi.h>
 #include <Wire.h>
+#include <SensorQMI8658.hpp>
 #define XPOWERS_CHIP_AXP2101
 #include <XPowersLib.h>
 #include <esp_wifi.h>
@@ -27,12 +28,17 @@
 #define SPEAKER_ENABLE 46
 
 constexpr uint8_t DISPLAY_BRIGHTNESS = 160;
+constexpr uint8_t IDLE_BRIGHTNESS = 12;
+constexpr uint32_t IDLE_AFTER_MS = 45000;
+constexpr uint32_t MOTION_POLL_MS = 100;
+constexpr float WAKE_MOTION_G = 0.12f;
 constexpr uint32_t TOP_LONG_MS = 900;
 constexpr uint32_t BUTTON_DEBOUNCE_MS = 250;
 constexpr uint32_t PMU_POLL_MS = 50;
 
 extern Arduino_Canvas canvas;
 extern XPowersPMU power;
+extern SensorQMI8658 imu;
 extern volatile bool topButtonDown;
 extern volatile bool topButtonPressed;
 extern volatile bool topButtonLong;
@@ -40,6 +46,8 @@ extern volatile bool topButtonLong;
 void ARDUINO_ISR_ATTR topButtonInterrupt();
 
 void hwInit();
+bool moved();
+void setDisplayBrightness(uint8_t brightness);
 void wifiStaReconnect();
 void wifiPromiscuousBegin(wifi_promiscuous_cb_t callback, uint8_t channel);
 void wifiPromiscuousEnd();

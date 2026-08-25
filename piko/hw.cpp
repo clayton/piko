@@ -1,6 +1,7 @@
 #include "hw.h"
 
 #include "config.h"
+#include "power_logic.h"
 
 Arduino_DataBus *bus = new Arduino_ESP32QSPI(
     LCD_CS, LCD_SCLK, LCD_SDIO0, LCD_SDIO1, LCD_SDIO2, LCD_SDIO3);
@@ -8,6 +9,7 @@ Arduino_CO5300 *display = new Arduino_CO5300(
     bus, GFX_NOT_DEFINED, 0, LCD_WIDTH, LCD_HEIGHT, 16, 0, 0, 0);
 Arduino_Canvas canvas(LCD_WIDTH, LCD_HEIGHT, display);
 XPowersPMU power;
+SensorQMI8658 imu;
 volatile bool topButtonDown = false;
 volatile bool topButtonPressed = false;
 volatile bool topButtonLong = false;
@@ -38,6 +40,30 @@ void hwInit() {
   }
   canvas.begin();
   display->setBrightness(DISPLAY_BRIGHTNESS);
+  if (imu.begin(Wire, QMI8658_L_SLAVE_ADDRESS, IIC_SDA, IIC_SCL)) {
+    imu.configAccelerometer(SensorQMI8658::ACC_RANGE_4G, SensorQMI8658::ACC_ODR_LOWPOWER_21Hz,
+                            SensorQMI8658::LPF_MODE_0);
+    imu.enableAccelerometer();
+  }
+}
+
+bool moved() {
+  static bool ready = false;
+  static float lastX = 0;
+  static float lastY = 0;
+  static float lastZ = 0;
+  float x, y, z;
+  if (!imu.getDataReady() || !imu.getAccelerometer(x, y, z)) return false;
+  bool result = ready && motionDetected(x, y, z, lastX, lastY, lastZ, WAKE_MOTION_G);
+  lastX = x;
+  lastY = y;
+  lastZ = z;
+  ready = true;
+  return result;
+}
+
+void setDisplayBrightness(uint8_t brightness) {
+  display->setBrightness(brightness);
 }
 
 void wifiStaReconnect() {
