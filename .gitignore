@@ -1,0 +1,8 @@
+build/
+backups/
+Makefile.local
+radar/config.h
+radar/config.h.tpl
+radar/secrets.h
+radar/secrets.h.tpl
+.DS_Store

@@ -1,0 +1,2 @@
+CONFIG_TEMPLATE = radar/config.h.tpl
+FACTORY_BACKUP = backups/factory.bin

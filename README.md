@@ -1,0 +1,58 @@
+# Piko radar
+
+A live pocket aircraft display for the Waveshare ESP32-S3 Touch AMOLED 1.8 V2.
+
+Piko reads a local dump1090-compatible feed and shows one aircraft at a time with ADSBDB route and airframe details. The top button cycles **NEAR**, **HIGH**, and **BIG** rankings. The bottom button advances to the next aircraft. Hold the bottom button for about six seconds to power off.
+
+## Hardware
+
+- Waveshare ESP32-S3 Touch AMOLED 1.8 V2
+- Local dump1090 or FlightRadar24 feeder
+- Wi-Fi access to the feeder
+
+## Configure
+
+Copy the public example and enter your local values:
+
+```sh
+cp radar/config.h.example radar/config.h
+```
+
+`radar/config.h` contains Wi-Fi credentials, feeder addresses, and receiver coordinates. It is ignored by Git.
+
+The Makefile can copy any ignored local template into place. Set it in an ignored `Makefile.local`:
+
+```make
+CONFIG_TEMPLATE = radar/config.h.tpl
+```
+
+Then run `make secrets`. This supports a 1Password `op inject` workflow outside the public repository.
+
+## Build and flash
+
+```sh
+brew install arduino-cli
+make setup
+make flash
+make clean-secrets
+```
+
+The default serial port is `/dev/cu.usbmodem1101`. Override it when needed:
+
+```sh
+make flash PORT=/dev/cu.usbmodemXXXX
+```
+
+## Aircraft enrichment proxy
+
+The firmware expects `PLANE_DETAILS_URL` to return the ADSBDB aircraft response for query parameters named `hex` and `callsign`. A minimal Lighttpd CGI proxy can forward:
+
+```text
+https://api.adsbdb.com/v0/aircraft/{hex}?callsign={callsign}
+```
+
+Keep the proxy on the feeder so the ESP32 only makes local HTTP requests.
+
+## Factory backup
+
+Private device backups belong under the ignored `backups/` directory. To enable `make restore`, copy `Makefile.local.example` to `Makefile.local` and set `FACTORY_BACKUP` to your image path.
