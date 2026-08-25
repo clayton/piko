@@ -9,6 +9,7 @@
 #include <math.h>
 
 #include "config.h"
+#include "route_logic.h"
 
 #define LCD_SDIO0 4
 #define LCD_SDIO1 5
@@ -206,10 +207,17 @@ void fetchDetails(const Target &target) {
   copyText(details.model, sizeof(details.model), response["aircraft"]["icao_type"] | "");
   copyText(details.airline, sizeof(details.airline), response["flightroute"]["airline"]["name"] | response["aircraft"]["registered_owner"] | "");
   copyText(details.airlineCode, sizeof(details.airlineCode), response["flightroute"]["airline"]["icao"] | "");
-  copyText(details.origin, sizeof(details.origin), response["flightroute"]["origin"]["iata_code"] | "");
-  copyText(details.destination, sizeof(details.destination), response["flightroute"]["destination"]["iata_code"] | "");
-  copyText(details.originCity, sizeof(details.originCity), response["flightroute"]["origin"]["municipality"] | "");
-  copyText(details.destinationCity, sizeof(details.destinationCity), response["flightroute"]["destination"]["municipality"] | "");
+  JsonObject origin = response["flightroute"]["origin"];
+  JsonObject destination = response["flightroute"]["destination"];
+  if (origin["latitude"].is<float>() && origin["longitude"].is<float>() &&
+      destination["latitude"].is<float>() && destination["longitude"].is<float>() &&
+      routeNearReceiver(RECEIVER_LAT, RECEIVER_LON, origin["latitude"], origin["longitude"],
+                        destination["latitude"], destination["longitude"])) {
+    copyText(details.origin, sizeof(details.origin), origin["iata_code"] | "");
+    copyText(details.destination, sizeof(details.destination), destination["iata_code"] | "");
+    copyText(details.originCity, sizeof(details.originCity), origin["municipality"] | "");
+    copyText(details.destinationCity, sizeof(details.destinationCity), destination["municipality"] | "");
+  }
   Serial.printf("Selected %s %s %s-%s %s\n", target.callsign, details.registration,
                 details.origin, details.destination, details.type);
 }
@@ -330,7 +338,7 @@ void drawCard() {
   centered(route, 135, 4, 0x07FF);
 
   char aircraft[32];
-  snprintf(aircraft, sizeof(aircraft), "%s  %s", details.model, details.registration);
+  snprintf(aircraft, sizeof(aircraft), "%s  %s", displayAircraftType(details.model), details.registration);
   centered(aircraft, 180, 2, 0xBDF7);
 
   char distance[14];
