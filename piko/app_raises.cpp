@@ -147,7 +147,10 @@ bool fetchFeed() {
     ++incidentCount;
   }
   if (selected >= incidentCount) selected = 0;
-  if (changed) arrivedAt = millis();
+  if (changed) {
+    arrivedAt = millis();
+    wakeDisplay();
+  }
   return true;
 }
 

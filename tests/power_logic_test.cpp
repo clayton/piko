@@ -6,6 +6,7 @@
 int main() {
   assert(!shouldIdle(false, true, 44999, 0, 45000));
   assert(shouldIdle(false, true, 45000, 0, 45000));
+  assert(!shouldIdle(false, true, 5000, 5001, 45000));
   assert(!shouldIdle(true, true, 90000, 0, 45000));
   assert(!shouldIdle(false, false, 90000, 0, 45000));
 

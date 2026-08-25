@@ -28,7 +28,7 @@
 #define SPEAKER_ENABLE 46
 
 constexpr uint8_t DISPLAY_BRIGHTNESS = 160;
-constexpr uint8_t IDLE_BRIGHTNESS = 12;
+constexpr uint8_t IDLE_BRIGHTNESS = 32;
 constexpr uint32_t IDLE_AFTER_MS = 45000;
 constexpr uint32_t MOTION_POLL_MS = 100;
 constexpr float WAKE_MOTION_G = 0.12f;
