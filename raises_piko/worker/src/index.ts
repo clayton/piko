@@ -25,7 +25,8 @@ function json(value: unknown, status = 200): Response {
 
 function bytesFromHex(value: string): Uint8Array | null {
   if (!/^[0-9a-f]{64}$/.test(value)) return null;
-  return Uint8Array.from(value.match(/../g)!, (byte) => Number.parseInt(byte, 16));
+  const bytes = value.match(/../g);
+  return bytes ? Uint8Array.from(bytes, (byte) => Number.parseInt(byte, 16)) : null;
 }
 
 async function validRaisesSignature(request: Request, secret: string, body: string): Promise<boolean> {
@@ -80,7 +81,11 @@ export default {
 
     if (request.method === "GET" && url.pathname === "/piko") {
       const token = request.headers.get("Authorization")?.replace(/^Bearer /, "");
-      if (!token || token !== env.PIKO_DEVICE_TOKEN) return json({ error: "unauthorized" }, 401);
+      const actual = token ? encoder.encode(token) : new Uint8Array();
+      const expected = encoder.encode(env.PIKO_DEVICE_TOKEN);
+      if (actual.byteLength !== expected.byteLength || !crypto.subtle.timingSafeEqual(actual, expected)) {
+        return json({ error: "unauthorized" }, 401);
+      }
       return json(await state(env));
     }
 
