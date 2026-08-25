@@ -4,7 +4,7 @@ PORT ?= /dev/cu.usbmodem1101
 FQBN = esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=app3M_fat9M_16MB,PSRAM=opi,USBMode=hwcdc,CDCOnBoot=cdc,FlashMode=qio,UploadSpeed=460800
 CONFIG_TEMPLATE ?= radar/config.h.example
 
-.PHONY: setup secrets build flash monitor restore clean-secrets
+.PHONY: setup secrets build flash geiger-build geiger-flash monitor restore clean-secrets
 
 setup:
 	arduino-cli core install esp32:esp32@3.3.5
@@ -20,6 +20,13 @@ build:
 
 flash: build
 	arduino-cli upload -p $(PORT) --fqbn '$(FQBN)' --input-dir build radar
+
+geiger-build:
+	rm -rf build-geiger
+	arduino-cli compile --fqbn '$(FQBN)' --libraries libraries --output-dir build-geiger internet_geiger
+
+geiger-flash: geiger-build
+	arduino-cli upload -p $(PORT) --fqbn '$(FQBN)' --input-dir build-geiger internet_geiger
 
 monitor:
 	arduino-cli monitor -p $(PORT) --config baudrate=115200

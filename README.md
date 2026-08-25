@@ -1,6 +1,19 @@
 # Piko radar
 
-A live pocket aircraft display for the Waveshare ESP32-S3 Touch AMOLED 1.8 V2.
+Pocket instruments for the Waveshare ESP32-S3 Touch AMOLED 1.8 V2.
+
+## Internet Geiger counter
+
+`internet_geiger/` passively samples nearby Wi-Fi management and data frames. It turns radio traffic into a rolling counts-per-minute score, a 60-second activity graph, pixel flashes, and speaker clicks.
+
+```sh
+make setup
+make geiger-flash
+```
+
+The top button cycles LOW, MED, and HIGH sensitivity. The bottom button mutes the speaker. Hold the bottom button for about six seconds to power off. The firmware does not join a network, save packet contents, or transmit captured data.
+
+## Aircraft display
 
 Piko reads a local dump1090-compatible feed and shows one aircraft at a time with ADSBDB route and airframe details. The top button cycles **NEAR**, **HIGH**, and **BIG** rankings. The bottom button advances to the next aircraft. Hold the bottom button for about six seconds to power off.
 
