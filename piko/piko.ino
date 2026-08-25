@@ -25,6 +25,7 @@ void app_geiger_bottom_short();
 void app_raises_enter();
 void app_raises_exit();
 void app_raises_tick();
+void app_raises_poll();
 void app_raises_draw();
 const char *app_raises_status();
 void app_raises_top_short();
@@ -81,6 +82,10 @@ void drawSwitcher() {
   canvas.setCursor(14, 428);
   canvas.print("TOP cycles   BOTTOM launches");
   canvas.flush();
+}
+
+int activeAppId() {
+  return activeApp;
 }
 
 void drawIdle() {
@@ -188,6 +193,7 @@ void loop() {
     }
   }
   if (runState == STATE_APP) APPS[activeApp].tick();
+  if (activeApp != APP_RAISES) app_raises_poll();
   const uint32_t afterTick = millis();
   const bool onUsb = pluggedIn();
   if (displayIdle && onUsb) wakeDisplay();

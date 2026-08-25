@@ -6,6 +6,7 @@
 
 #include "config.h"
 #include "hw.h"
+#include "raises_logic.h"
 #include "ui.h"
 
 void app_raises_draw();
@@ -146,10 +147,10 @@ bool fetchFeed() {
     copyText(incidents[incidentCount].message, sizeof(incidents[incidentCount].message), event["message"] | "Raises event");
     ++incidentCount;
   }
-  if (selected >= incidentCount) selected = 0;
+  selected = selectedIncident(changed, selected, incidentCount);
   if (changed) {
     arrivedAt = millis();
-    wakeDisplay();
+    if (activeAppId() == APP_RAISES) wakeDisplay();
   }
   return true;
 }
@@ -166,11 +167,15 @@ void app_raises_enter() {
 
 void app_raises_exit() {}
 
-void app_raises_tick() {
+void app_raises_poll() {
   if (millis() - lastPoll >= POLL_MS) {
     lastPoll = millis();
     fetchFeed();
   }
+}
+
+void app_raises_tick() {
+  app_raises_poll();
   if (!displayIdle && millis() - lastFrame >= FRAME_MS) {
     lastFrame = millis();
     app_raises_draw();

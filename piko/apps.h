@@ -17,5 +17,6 @@ extern const int APP_COUNT;
 extern bool displayIdle;
 void drawIdle();
 bool wakeDisplay();
+int activeAppId();
 
 enum AppId { APP_RADAR = 0, APP_GEIGER = 1, APP_RAISES = 2 };
