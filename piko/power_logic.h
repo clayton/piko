@@ -3,8 +3,10 @@
 #include <math.h>
 #include <stdint.h>
 
-inline bool shouldIdle(bool idle, bool inApp, uint32_t now, uint32_t lastActivity, uint32_t timeout) {
-  return !idle && inApp && static_cast<int32_t>(now - lastActivity) >= static_cast<int32_t>(timeout);
+inline bool shouldIdle(bool idle, bool inApp, bool pluggedIn,
+                       uint32_t now, uint32_t lastActivity, uint32_t timeout) {
+  return !idle && inApp && !pluggedIn &&
+         static_cast<int32_t>(now - lastActivity) >= static_cast<int32_t>(timeout);
 }
 
 inline bool motionDetected(float x, float y, float z,

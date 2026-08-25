@@ -189,11 +189,13 @@ void loop() {
   }
   if (runState == STATE_APP) APPS[activeApp].tick();
   const uint32_t afterTick = millis();
+  const bool onUsb = pluggedIn();
+  if (displayIdle && onUsb) wakeDisplay();
   if (displayIdle && afterTick - lastIdleDraw >= 1000) {
     lastIdleDraw = afterTick;
     drawIdle();
   }
-  if (shouldIdle(displayIdle, runState == STATE_APP, afterTick, lastActivity, IDLE_AFTER_MS)) {
+  if (shouldIdle(displayIdle, runState == STATE_APP, onUsb, afterTick, lastActivity, IDLE_AFTER_MS)) {
     displayIdle = true;
     lastIdleDraw = afterTick;
     setDisplayBrightness(IDLE_BRIGHTNESS);

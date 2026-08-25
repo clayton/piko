@@ -47,6 +47,7 @@ void ARDUINO_ISR_ATTR topButtonInterrupt();
 
 void hwInit();
 bool moved();
+bool pluggedIn();
 void setDisplayBrightness(uint8_t brightness);
 void wifiStaReconnect();
 void wifiPromiscuousBegin(wifi_promiscuous_cb_t callback, uint8_t channel);

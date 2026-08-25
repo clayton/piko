@@ -62,6 +62,10 @@ bool moved() {
   return result;
 }
 
+bool pluggedIn() {
+  return power.isVbusIn();
+}
+
 void setDisplayBrightness(uint8_t brightness) {
   display->setBrightness(brightness);
 }
