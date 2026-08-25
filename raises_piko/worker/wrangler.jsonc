@@ -4,10 +4,8 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-08-25",
   "compatibility_flags": ["nodejs_compat"],
-  "vars": {
-    "PIKO_DEVICE_TOKEN": "configured-as-a-secret",
-    "RAISES_SIGNING_SECRET": "configured-as-a-secret"
-  },
+  "workers_dev": true,
+  "preview_urls": false,
   "kv_namespaces": [
     { "binding": "PIKO", "id": "db702546784b4089a7b8d5e968e6f2e1" }
   ],

@@ -104,12 +104,14 @@ export default {
       } catch {
         return json({ error: "invalid JSON" }, 400);
       }
-      const current = await state(env);
-      if (!current.events.some((event) => event.id === payload.id)) {
-        current.events.unshift(compact(payload));
-        current.events = current.events.slice(0, MAX_EVENTS);
-        current.revision += 1;
-        await env.PIKO.put("state", JSON.stringify(current));
+      if (payload.type !== "webhook.test") {
+        const current = await state(env);
+        if (!current.events.some((event) => event.id === payload.id)) {
+          current.events.unshift(compact(payload));
+          current.events = current.events.slice(0, MAX_EVENTS);
+          current.revision += 1;
+          await env.PIKO.put("state", JSON.stringify(current));
+        }
       }
       return json({ accepted: true });
     }
