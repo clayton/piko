@@ -4,7 +4,7 @@ Pocket instruments for the Waveshare ESP32-S3 Touch AMOLED 1.8 V2.
 
 ## Unified firmware
 
-`piko/` combines Radar, Internet Geiger, and Raises Piko in one binary. Hold the **top button for about 900 ms** to open the app switcher. In the switcher, a short top press cycles apps and a short bottom press launches the highlighted one. Short top and bottom presses keep each app's normal behavior while you are inside an app. Hold the bottom button for about six seconds to power off.
+`piko/` combines Radar, Internet Geiger, Raises Piko, and Piko Shaker in one binary. Hold the **top button for about 900 ms** to open the app switcher. In the switcher, a short top press cycles apps and a short bottom press launches the highlighted one. Short top and bottom presses keep each app's normal behavior while you are inside an app. Hold the bottom button for about six seconds to power off.
 
 The unified firmware starts in Raises Piko on boot and keeps checking Raises while another app is open. Shake Piko while Raises is visible to dismiss the current feed and return him to green; this only dismisses it on the device and does not acknowledge the error in Raises. A newer event brings the alert state back. On battery power, the display dims to a tiny status line after 45 seconds without movement or a button press. Pick Piko up, move it, or press either button to restore the full app. The first button press only wakes the display. Piko stays awake while USB power is connected.
 
@@ -15,6 +15,10 @@ make piko-flash
 ```
 
 Standalone sketches below still build and flash independently.
+
+## Piko Shaker
+
+Tilt Piko to pour 60 particles around the screen, shake him to scatter them, and wait for the settling clicks. The top button squashes or releases Piko. The bottom button tosses the particles.
 
 ## Internet Geiger counter
 
@@ -67,7 +71,7 @@ Then run `make secrets`. This supports a 1Password `op inject` workflow outside 
 ```sh
 brew install arduino-cli
 make setup
-make piko-flash    # all three apps
+make piko-flash    # all four apps
 make flash         # radar only
 make geiger-flash  # geiger only
 make raises-flash  # raises only

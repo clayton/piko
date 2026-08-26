@@ -48,6 +48,7 @@ void ARDUINO_ISR_ATTR topButtonInterrupt();
 
 void hwInit();
 float movement();
+bool acceleration(float &x, float &y, float &z);
 bool pluggedIn();
 void setDisplayBrightness(uint8_t brightness);
 void wifiStaReconnect();

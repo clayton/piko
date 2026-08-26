@@ -31,6 +31,15 @@ const char *app_raises_status();
 void app_raises_top_short();
 void app_raises_bottom_short();
 
+void app_shaker_enter();
+void app_shaker_exit();
+void app_shaker_tick();
+void app_shaker_motion(float motion);
+void app_shaker_draw();
+const char *app_shaker_status();
+void app_shaker_top_short();
+void app_shaker_bottom_short();
+
 const App APPS[] = {
     {"RADAR", "Who is overhead right now?", app_radar_enter, app_radar_exit, app_radar_tick, app_radar_draw,
      app_radar_status, app_radar_top_short, app_radar_bottom_short},
@@ -38,6 +47,8 @@ const App APPS[] = {
      app_geiger_status, app_geiger_top_short, app_geiger_bottom_short},
     {"RAISES", "Bug buddy on duty", app_raises_enter, app_raises_exit, app_raises_tick, app_raises_draw,
      app_raises_status, app_raises_top_short, app_raises_bottom_short},
+    {"SHAKER", "Tilt, shake, and squish Piko", app_shaker_enter, app_shaker_exit, app_shaker_tick,
+     app_shaker_draw, app_shaker_status, app_shaker_top_short, app_shaker_bottom_short},
 };
 
 const int APP_COUNT = sizeof(APPS) / sizeof(APPS[0]);
@@ -62,18 +73,18 @@ void drawSwitcher() {
   centered("PICK AN APP", 24, 3, 0x07FF);
   centered("Hold top to open, bottom to launch", 58, 1, 0x8410);
 
-  const uint16_t colors[] = {0x07FF, 0x07E0, 0xFFE0};
+  const uint16_t colors[] = {0x07FF, 0x07E0, 0xFFE0, 0xF81F};
   for (int i = 0; i < APP_COUNT; ++i) {
     const bool selected = i == switcherIndex;
-    const int y = 92 + i * 108;
-    canvas.fillRoundRect(14, y, 340, 92, 14, selected ? colors[i % 3] : 0x1082);
+    const int y = 84 + i * 82;
+    canvas.fillRoundRect(14, y, 340, 70, 14, selected ? colors[i % 4] : 0x1082);
     canvas.setTextSize(3);
     canvas.setTextColor(selected ? 0x0000 : 0xFFFF);
-    canvas.setCursor(34, y + 18);
+    canvas.setCursor(34, y + 10);
     canvas.print(APPS[i].name);
-    canvas.setTextSize(2);
+    canvas.setTextSize(1);
     canvas.setTextColor(selected ? 0x0000 : 0xBDF7);
-    canvas.setCursor(34, y + 54);
+    canvas.setCursor(34, y + 47);
     canvas.print(APPS[i].tagline);
   }
 
@@ -189,6 +200,7 @@ void loop() {
   if (now - lastMotionPoll >= MOTION_POLL_MS) {
     lastMotionPoll = now;
     float motion = movement();
+    if (activeApp == APP_SHAKER) app_shaker_motion(motion);
     if (activeApp == APP_RAISES && motion >= SHAKE_MOTION_G && app_raises_dismiss()) {
       lastActivity = now;
     } else if (motion >= WAKE_MOTION_G) {

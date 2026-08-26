@@ -47,13 +47,26 @@ void hwInit() {
   }
 }
 
+float accelX = 0;
+float accelY = 0;
+float accelZ = 0;
+bool accelReady = false;
+
+bool acceleration(float &x, float &y, float &z) {
+  if (imu.getDataReady() && imu.getAccelerometer(accelX, accelY, accelZ)) accelReady = true;
+  x = accelX;
+  y = accelY;
+  z = accelZ;
+  return accelReady;
+}
+
 float movement() {
   static bool ready = false;
   static float lastX = 0;
   static float lastY = 0;
   static float lastZ = 0;
   float x, y, z;
-  if (!imu.getDataReady() || !imu.getAccelerometer(x, y, z)) return 0;
+  if (!acceleration(x, y, z)) return 0;
   float result = ready ? fabsf(x - lastX) + fabsf(y - lastY) + fabsf(z - lastZ) : 0;
   lastX = x;
   lastY = y;
