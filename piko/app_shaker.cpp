@@ -18,6 +18,8 @@ constexpr int RIGHT = LCD_WIDTH - 8;
 constexpr int BOTTOM = LCD_HEIGHT - 8;
 constexpr float PARTICLE_RADIUS = 3;
 constexpr float GRAVITY = 520;
+constexpr float UPRIGHT_X = 0.783f;
+constexpr float UPRIGHT_Y = -0.062f;
 constexpr uint32_t FRAME_MS = 33;
 constexpr uint16_t PARTICLE_COLORS[] = {0x07FF, 0xFFE0, 0xF81F, 0x07E0, 0xFFFF};
 
@@ -117,8 +119,8 @@ void app_shaker_tick() {
 
   float ax, ay, az;
   acceleration(ax, ay, az);
-  float gx = ax * GRAVITY;
-  float gy = ay * GRAVITY;
+  float gx, gy;
+  shakerGravity(ax, ay, UPRIGHT_X, UPRIGHT_Y, GRAVITY, gx, gy);
   if (pendingShake >= SHAKE_MOTION_G) {
     float energy = min(1.0f, pendingShake / 2.5f);
     for (auto &particle : particles) {
@@ -137,6 +139,9 @@ void app_shaker_tick() {
   bool hit = false;
   for (auto &particle : particles)
     hit |= stepShakerParticle(particle, gx, gy, dt, LEFT, TOP, RIGHT, BOTTOM, PARTICLE_RADIUS);
+  for (int i = 0; i < PARTICLE_COUNT; ++i)
+    for (int j = i + 1; j < PARTICLE_COUNT; ++j)
+      separateShakerParticles(particles[i], particles[j], PARTICLE_RADIUS);
   if (hit && now - lastClick > 90) {
     lastClick = now;
     sound(900 + random(0, 500), 1800);

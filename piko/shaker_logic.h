@@ -9,6 +9,42 @@ struct ShakerParticle {
   float vy;
 };
 
+inline void shakerGravity(float ax, float ay, float uprightX, float uprightY,
+                          float strength, float &gx, float &gy) {
+  gx = (-ax * uprightY + ay * uprightX) * strength;
+  gy = (ax * uprightX + ay * uprightY) * strength;
+}
+
+inline bool separateShakerParticles(ShakerParticle &a, ShakerParticle &b, float radius) {
+  float dx = b.x - a.x;
+  float dy = b.y - a.y;
+  float distanceSquared = dx * dx + dy * dy;
+  float minimum = radius * 2;
+  if (distanceSquared >= minimum * minimum) return false;
+  float distance = sqrtf(distanceSquared);
+  if (distance < 0.01f) {
+    dx = 1;
+    dy = 0;
+    distance = 1;
+  }
+  float nx = dx / distance;
+  float ny = dy / distance;
+  float overlap = (minimum - distance) * 0.5f;
+  a.x -= nx * overlap;
+  a.y -= ny * overlap;
+  b.x += nx * overlap;
+  b.y += ny * overlap;
+  float closingSpeed = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
+  if (closingSpeed < 0) {
+    float impulse = -closingSpeed * 0.35f;
+    a.vx -= impulse * nx;
+    a.vy -= impulse * ny;
+    b.vx += impulse * nx;
+    b.vy += impulse * ny;
+  }
+  return true;
+}
+
 inline bool stepShakerParticle(ShakerParticle &particle, float gx, float gy, float dt,
                                float left, float top, float right, float bottom, float radius) {
   particle.vx = (particle.vx + gx * dt) * 0.995f;
